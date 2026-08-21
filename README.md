@@ -62,4 +62,6 @@ wli/wli_example_2d.py                     # WLI example figure (3 panels)
 CC-BY 4.0
 
 ## Citation
-Kucharski, D. (2026). SEM Grating Pitch Benchmark Dataset [Data set]. Zenodo. https://doi.org/10.5281/zenodo.20641961
+Kucharski, D. (2026). SEM Grating Pitch Benchmark Dataset [Data set]. Zenodo.
+https://doi.org/10.5281/zenodo.20641960 (all versions; latest: v1.1,
+https://doi.org/10.5281/zenodo.22045044)
