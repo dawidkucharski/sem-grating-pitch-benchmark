@@ -5,6 +5,8 @@ This dataset accompanies the manuscript *"Self-consistent SEM magnification line
 
 The dataset comprises 1500 SEM images in total (750 per detector) of a Thorlabs GH13-06U reflective holographic diffraction grating (600 lines/mm nominal), acquired on a JEOL JSM-IT700HR field-emission SEM at four magnifications (400×, 500×, 750×, 1000×) using both secondary-electron (SED) and backscattered-electron (BED-S) detectors: 400×: 19×19 grid (361 SED + 361 BED-S), 500×: 15×15 (225 + 225), 750×: 10×10 (100 + 100), 1000×: 8×8 (64 + 64).
 
+The raw SEM images (~2.5 GB) are not hosted in this repository owing to their size; they are available from the corresponding author upon reasonable request. This repository contains the complete analysis results and the R/Python analysis pipelines.
+
 ## Contents
 
 ```
