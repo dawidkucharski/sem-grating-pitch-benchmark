@@ -11,7 +11,7 @@ The raw SEM images (~2.5 GB) are not hosted in this repository owing to their si
 
 ```
 # Per-image and aggregate results
-per_image_pitch_mag{mag}_{detector}.csv   # Per-image 1D + 2D FFT pitch values
+per_image_pitch_mag{mag}_{detector}.csv   # Per-image 1D pitch + sub-bin profile-FFT pitch (synced from fft_subpixel_per_image.csv)
 fft_subpixel_per_image.csv                # Sub-bin-refined 2D FFT pitch, all 1500 images
 pitch1d_physical.csv                      # Per-image 1D pitch + stage coordinates, both detectors
 linearity_physical_units.csv              # Linearity slopes in um/um (SED-only, superseded)
@@ -31,6 +31,11 @@ simulate_validate.R                       # Synthetic image validation
 # Python analyses (reproduce the published figures/numbers)
 python/sem_fft_subpixel.py                # Sub-bin FFT refinement (16× zero-pad + parabolic)
 python/sem_fft_figures.py                 # FFT invariance + 1D-FFT agreement figures
+sem_detector_forest.py                    # Bootstrapped Bland-Altman forest plot (SED vs BED-S)
+sem_ba_fig.py                             # Per-image Bland-Altman plot (1000x, n=56)
+sem_magerr_fig.py                         # Magnification discrepancy + spacing figure
+audit_numbers.py, audit_part2.py          # Full numeric audit of the manuscript vs CSVs
+gp_lrt_check.R                            # GP likelihood-ratio test reproduction
 python/sem_pitch1d_physical.py            # 1D pitch + physical-unit linearity (Table 4)
 python/sem_linearity_fig.py               # linearity_combined.pdf (stage coordinates)
 python/method_comparison_pitch.py         # Cross-method comparison figure
@@ -54,7 +59,7 @@ wli/wli_example_2d.py                     # WLI example figure (3 panels)
 
 - Sub-bin-refined 2D FFT pitch: **1.644 µm**, invariant across magnifications and detectors (per-magnification medians 1.642–1.648 µm, SNR > 150)
 - Naive integer-bin FFT: 1.707 µm (analytical artefact, not physical)
-- 1D profile-minima pitch: 1.643–1.648 µm (agrees with FFT to +0.002 µm)
+- 1D profile-minima pitch: 1.643–1.648 µm (bias vs FFT +0.0045 µm, 95% LoA [−0.062, +0.071] µm, n = 1432)
 - WLI pitch: **1.6651 µm** (30 repeats: SD 0.07 nm; 36 positions: SD 0.13 nm)
 - Optical diffraction: 1.65 ± 0.21 µm (k=3)
 - Field linearity (stage coordinates): **≤ 0.5%** across every scanned field (≤ 0.9% for a single detector)

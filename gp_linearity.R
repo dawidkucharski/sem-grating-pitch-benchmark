@@ -126,16 +126,13 @@ fit_gp_linearity <- function(mag) {
   
   # Interpret lengthscale in physical units
   # In normalised coords, lengthscale=0.3 means correlation decays over ~30% of the field
-  # Convert to approximate physical length: lengthscale * field_width_um
-  pixel_scale <- 0.01333594
-  fov_width_px  <- 1280  # image width in pixels
-  fov_width_um  <- fov_width_px * pixel_scale  # ~17.1 µm per tile
-  tile_range_x  <- max(df$tile_x) - min(df$tile_x)
-  approx_field_width_um <- fov_width_um * (tile_range_x + 1)  # rough estimate
-  lengthscale_um <- lengthscale_opt * approx_field_width_um
+  # Convert to physical units using the stage-coordinate field extent
+  # (Table: linearity); these are the true physical positions of the tile centres.
+  stage_field_width_um <- c("400" = 305, "500" = 237, "750" = 153, "1000" = 119)[as.character(mag)]
+  lengthscale_um <- lengthscale_opt * stage_field_width_um
   
   cat(sprintf("  Approx. physical lengthscale: %.1f µm\n", lengthscale_um))
-  cat(sprintf("  Approx. field width: %.0f µm\n", approx_field_width_um))
+  cat(sprintf("  Stage field width: %.0f µm\n", stage_field_width_um))
   
   # Predict on a fine grid for visualisation
   ngrid <- 50
@@ -260,12 +257,13 @@ for (mag in mags) {
   
   # Use a consistent colour range centred on the median pitch for this mag
   pitch_range <- range(z, na.rm = TRUE)
+  stage_field_width_um <- c("400" = 305, "500" = 237, "750" = 153, "1000" = 119)[as.character(mag)]
   image(grid_x, grid_y, z,
         col = hcl.colors(64, "RdBu", rev = TRUE),
         zlim = pitch_range,
         xlab = "Normalised X", ylab = "Normalised Y",
         main = sprintf("%d×  (lengthscale = %.0f µm)", mag,
-                       ls_opt * 17.07 * (max(df$tile_x) - min(df$tile_x) + 1)))
+                       ls_opt * stage_field_width_um))
   contour(grid_x, grid_y, z, add = TRUE, col = "grey30", lwd = 0.5)
 }
 
