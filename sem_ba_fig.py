@@ -44,10 +44,10 @@ ax.text(xlo + 0.0015, loa_hi + 0.004, f"+1.96 SD = {loa_hi:+.4f} \u00b5m",
 ax.text(xlo + 0.0015, loa_lo - 0.004, f"\u22121.96 SD = {loa_lo:+.4f} \u00b5m",
         ha="left", va="top", color="0.25", fontsize=8)
 
-# summary block inside the top-right corner of the axes
-ax.text(0.985, 0.965,
+# summary block inside the top-left corner of the axes (free of points)
+ax.text(0.015, 0.965,
         f"$n$ = {len(diff)} pairs\npaired $t$-test $p$ = {p:.2f}",
-        transform=ax.transAxes, ha="right", va="top", fontsize=8,
+        transform=ax.transAxes, ha="left", va="top", fontsize=8,
         color="0.2",
         bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="0.8", lw=0.5))
 
