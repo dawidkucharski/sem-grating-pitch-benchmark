@@ -35,7 +35,7 @@ sem_detector_forest.py                    # Bootstrapped Bland-Altman forest plo
 sem_ba_fig.py                             # Per-image Bland-Altman plot (1000x, n=56)
 sem_magerr_fig.py                         # Magnification discrepancy + spacing figure
 audit_numbers.py, audit_part2.py          # Full numeric audit of the manuscript vs CSVs
-gp_lrt_check.R                            # GP likelihood-ratio test reproduction
+sem_gp.py                                 # Numerically stable GP fit (LRT, lengthscale, maps; replaces gp_linearity.R, whose chol() failed)
 python/sem_pitch1d_physical.py            # 1D pitch + physical-unit linearity (Table 4)
 python/sem_linearity_fig.py               # linearity_combined.pdf (stage coordinates)
 python/method_comparison_pitch.py         # Cross-method comparison figure

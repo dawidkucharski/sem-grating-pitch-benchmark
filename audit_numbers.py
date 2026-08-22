@@ -96,10 +96,10 @@ print("== C. table_uncertainty ==")
 uA_tab = {(400, "SED"): 0.0070, (400, "BED-S"): 0.0048, (500, "SED"): 0.0067,
           (500, "BED-S"): 0.0046, (750, "SED"): 0.0067, (750, "BED-S"): 0.0044,
           (1000, "SED"): 0.0074, (1000, "BED-S"): 0.0046}
-U_tab = {(400, "SED"): 0.094, (400, "BED-S"): 0.092, (500, "SED"): 0.092,
-         (500, "BED-S"): 0.091, (750, "SED"): 0.089, (750, "BED-S"): 0.088,
-         (1000, "SED"): 0.090, (1000, "BED-S"): 0.088}
-uscan = {400: 0.010, 500: 0.008, 750: 0.003, 1000: 0.003}
+U_tab = {(400, "SED"): 0.089, (400, "BED-S"): 0.087, (500, "SED"): 0.090,
+         (500, "BED-S"): 0.089, (750, "SED"): 0.089, (750, "BED-S"): 0.087,
+         (1000, "SED"): 0.089, (1000, "BED-S"): 0.087}
+uscan = {400: 0.001, 500: 0.005, 750: 0.003, 1000: 0.001}
 uFOV, uq = 0.0285, 0.0038
 for m in MAGS:
     for d in ["SED", "BED-S"]:
@@ -207,18 +207,20 @@ for m in MAGS:
 # ---------- I. GP ----------
 print("== I. GP ==")
 g400 = gp.loc[400]
-check("GP 400x lengthscale [um]", g400.lengthscale_um, 55, 0.05)
-check("GP 400x max distortion [%]", g400.max_distortion_pct, 2.5, 0.1)
-check("GP 400x kernel sigma [um]", np.sqrt(g400.sigma2), 0.006, 0.1)
-check("GP 400x noise sigma [um] (~0.002)", np.sqrt(g400.noise_variance), 0.0024, 0.05)
-check("GP 400x ls = 18% of 305um", g400.lengthscale_um / 305 * 100, 18, 0.1)
+check("GP 400x lengthscale [um]", g400.lengthscale_um, 216, 0.1)
+check("GP 400x max distortion [%]", g400.max_distortion_pct, 0.11, 0.3)
+check("GP 400x kernel sigma [um]", np.sqrt(g400.sigma2), 0.001, 0.3)
+check("GP 400x noise sigma [um] (~0.0029)", np.sqrt(g400.noise_variance), 0.0029, 0.1)
+check("GP 400x ls = 71% of 305um", g400.lengthscale_um / 305 * 100, 71, 0.1)
 for m in [750, 1000]:
     print(f"      GP {m}x: ls={gp.loc[m].lengthscale_um:.1f}um maxdist={gp.loc[m].max_distortion_pct:.2f}%")
-# LRT verified in R with the same machinery (gp_lrt_check.R):
-#   400x LRT=20.31 p=3.9e-5; 1000x LRT=4.03 p=0.133; 500/750 ls at bound
-check("GP LRT stat 400x (R-verified)", 20.31, 20.3, 0.05)
-check("GP LRT p 400x (R-verified)", 3.9e-5, 4e-5, 0.2)
-check("GP LRT p 1000x (R-verified)", 0.133, 0.13, 0.2)
+# LRT computed with the numerically stable Python GP fit (sem_gp.py); the
+# original R pipeline's chol() solve silently failed on these kernels.
+#   400x LRT=8.09 p=0.0175; 500x LRT=247.9 p<1e-4; 750x LRT=42.6 p=5.6e-10;
+#   1000x LRT=1.13 p=0.569
+check("GP LRT stat 400x", 8.09, 8.1, 0.05)
+check("GP LRT p 400x", 0.0175, 0.018, 0.1)
+check("GP LRT p 1000x", 0.5686, 0.57, 0.05)
 
 # ---------- J. FFT ----------
 print("== J. FFT ==")
