@@ -106,8 +106,10 @@ for out in [os.path.join(RDIR, "gp_linearity_summary.csv"),
     sum_df.to_csv(out, index=False)
     print("wrote", out)
 
-# figure (R-style 2x2 distortion maps)
-fig, axes = plt.subplots(2, 2, figsize=(9.0, 8.0))
+# figure (2x2 smooth-field maps, per-panel colour bars to avoid overlap)
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+fig, axes = plt.subplots(2, 2, figsize=(10.0, 8.6))
 for ax, r in zip(axes.ravel(), rows):
     z = r["grid"] + r["df"].local_pitch_um.mean()
     zm = z - z.mean()
@@ -117,13 +119,17 @@ for ax, r in zip(axes.ravel(), rows):
     ax.contour(zm, levels=np.linspace(-vmax, vmax, 9)[1:-1],
                extent=(0, 1, 0, 1), origin="lower", colors="0.25", linewidths=0.5)
     m = r["magnification"]
-    ax.set_title(f'{m}\u00d7  (lengthscale = {r["lengthscale_um"]:.0f} \u00b5m)',
-                 fontsize=10)
+    ax.set_title(f'{m}\u00d7  (lengthscale = {r["lengthscale_um"]:.0f} \u00b5m)\n'
+                 f'peak deviation \u00b1{vmax * 1000:.1f} nm',
+                 fontsize=9.5)
     ax.set_xlabel("Normalised X", fontsize=9)
     ax.set_ylabel("Normalised Y", fontsize=9)
     ax.tick_params(labelsize=8)
-fig.colorbar(im, ax=axes.ravel().tolist(), shrink=0.8,
-             label="Pitch deviation from field mean [\u00b5m]")
-fig.tight_layout()
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="4%", pad=0.06)
+    fig.colorbar(im, cax=cax)
+    cax.tick_params(labelsize=7)
+fig.subplots_adjust(left=0.08, right=0.95, top=0.93, bottom=0.08,
+                    wspace=0.35, hspace=0.55)
 fig.savefig(os.path.join(BASE, "gp_linearity_combined.pdf"))
 print("wrote gp_linearity_combined.pdf")
