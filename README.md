@@ -45,7 +45,7 @@ wli/wli_example_2d.py                     # WLI example figure (3 panels)
 - **Instrument:** JEOL JSM-IT700HR FE-SEM, 8 kV, high vacuum, 1280 × 960 px, 0.0133 µm/px
 - **Grating:** Thorlabs GH13-06U, 600 lines/mm nominal (1.667 µm pitch)
 - **1D method:** column-averaged profile, B-spline smoothing, minima detection
-- **2D FFT method:** Hann-windowed 2D FFT with 16× zero-padding and sub-bin parabolic peak refinement (mandatory: integer bins quantise the pitch in 0.155 µm steps)
+- **FFT method:** column-averaged intensity profile FFT with 16× zero-padding and sub-bin parabolic peak refinement (no window function; mandatory: integer bins quantise the pitch in 0.155 µm steps)
 - **Linearity:** per-image pitch regressed on stage coordinates (`$CM_STAGE_POSITION`) in physical units (µm/µm)
 - **WLI cross-check:** Hexagon Optiv DualZ 763 multisensor CMM (1904 × 1200 px, 0.4745 µm/px), block-median 2D FFT with sub-bin refinement
 - **Optical reference:** red diode laser (λ ≈ 635 nm), reflection geometry
