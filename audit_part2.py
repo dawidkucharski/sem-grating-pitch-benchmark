@@ -111,4 +111,27 @@ for _, r in bab.iterrows():
     print(f"      {int(r.magnification)}x: within-pair sd={sd:.3f} MDD={mdd:.3f}")
 print(f"      sd range {min(sds):.3f}-{max(sds):.3f} (claimed 0.036-0.063); MDD range {min(mdds):.3f}-{max(mdds):.3f} (claimed 0.006-0.015)")
 
+print("== Q. WLI lateral-scale propagation and En (acceptance certificate) ==")
+import math
+EU = 0.48 + 1.67 * 0.903 / 1000   # ISO 10360-7 imaging-probe EU at L=0.903 mm
+check("WLI EU at 0.9 mm [um]", EU, 0.48, 0.02)
+u_rel = (EU / math.sqrt(3)) / 903.0   # relative scale uncertainty of the field span
+check("WLI u_rel scale", u_rel, 3.1e-4, 0.05)
+u_lat = 1.6651 * u_rel
+check("WLI u_lat pitch k=1 [um]", u_lat, 0.0005, 0.05)
+u_A = r36.pitch_fft.std(ddof=1)
+u_c_wli = math.sqrt(u_A ** 2 + u_lat ** 2)
+check("WLI u_c combined k=1 [um]", u_c_wli, 0.00053, 0.05)
+U_wli = 3 * u_c_wli
+check("WLI U k=3 [um]", U_wli, 0.0016, 0.05)
+U_sem = 0.09; U_opt = 0.21
+delta_sw = 0.021   # manuscript-stated SEM FFT-WLI difference (unrounded 0.0209)
+En_sw = delta_sw / math.sqrt(U_sem ** 2 + U_wli ** 2)
+check("En SEM FFT-WLI", En_sw, 0.23, 0.05)
+delta_wo = abs(r36.pitch_fft.mean() - 1.650)
+En_wo = delta_wo / math.sqrt(U_opt ** 2 + U_wli ** 2)
+check("En WLI-optical", En_wo, 0.07, 0.05)
+uc_delta = math.sqrt(0.030 ** 2 + u_c_wli ** 2)
+check("|d|/u_c SEM-WLI", delta_sw / uc_delta, 0.7, 0.05)
+
 print(f"\n=== part2: {ok} passed, {warn} failed ===")

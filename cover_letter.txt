@@ -1,59 +1,68 @@
 Dear Editor,
 
-I am pleased to submit our manuscript entitled "Self-consistent methodology
-for SEM magnification linearity assessment using 2D Fourier analysis of a
-holographic grating: detector comparison, spatial characterisation, and open
-benchmark dataset" for consideration in Measurement Science and Technology.
+I am pleased to submit our manuscript entitled "Self-consistent SEM
+magnification linearity assessment using a holographic grating: Fourier
+analysis, detector comparison, and open dataset" for
+consideration in Measurement Science and Technology.
 
 This work presents a self-consistent methodology for assessing SEM
-magnification linearity and detector equivalence that does not require a
-certified reference standard. The key insight is that the 2D fast Fourier
-transform (FFT) of a periodic artefact provides an internal frequency
-reference---termed Internal Frequency Referencing (IFR)---whose invariance
-across magnifications and detectors serves as a relative consistency check.
-The methodology is demonstrated on a commercial holographic diffraction
-grating (Thorlabs GH13-06U, 600 lines/mm) imaged on a JEOL JSM-IT700HR
-field-emission SEM at four magnifications (400x-1000x) using both
+magnification linearity and detector comparison that does not require a
+certified reference standard. The fast Fourier transform (FFT) of the
+column-averaged intensity profile of a periodic artefact provides an
+internal frequency reference---termed Internal Frequency Referencing
+(IFR)---whose invariance across magnifications and detectors serves as a
+relative consistency check. The methodology is demonstrated on a
+commercial holographic grating (Thorlabs GH13-06U, 600 lines/mm) imaged
+on a JEOL JSM-IT700HR field-emission SEM at 400x-1000x with
 secondary-electron (SED) and backscattered-electron (BED-S) detectors
-(1500 images total). The key contributions are:
+(1500 images). The key contributions are:
 
-1. The 2D FFT yields an invariant pitch of 1.707 um across all magnifications
-   and detectors (SNR > 150), demonstrating relative magnification consistency
-   to within 0.06%. This Internal Frequency Referencing (IFR) principle is
-   transferable to any imaging instrument where a periodic reference structure
-   is available.
+1. The sub-bin-refined FFT yields a pitch of 1.644 um across all
+   magnifications and detectors (SNR > 150), demonstrating relative
+   magnification consistency to within 0.4%, conditional on the
+   instrument-reported pixel scale. Bootstrap confidence
+   intervals (10 000 replicates) show that the observed 750x scale step
+   (+0.244% in relative pixel-scale terms) is statistically robust
+   beyond sampling uncertainty.
 
-2. The 1D profile-minima method gives systematically smaller values
-   (1.643-1.648 um), with the -0.063 um offset attributed to the
-   non-sinusoidal groove intensity profile. An independent optical diffraction
-   measurement (lambda = 635 nm), performed at the geometric limit of the
-   reflection setup, gives 1.65 +/- 0.21 um (k=3), consistent with both
-   methods.
+2. The 1D profile-minima method (1.643-1.648 um) agrees with the FFT
+   value to within 0.005 um; the -0.063 um artefact of unrefined
+   integer-bin FFT quantisation is identified and resolved.
 
-3. SED and BED-S detectors yield statistically equivalent pitch values
-   (bootstrapped Bland-Altman bias <= 0.013 um, < 0.8%) across all
-   magnifications (56-353 paired tiles).
+3. No practically relevant detector-dependent pitch bias was detected:
+   median paired SED-BED-S differences are 0.0000 um at all
+   magnifications (bootstrap 95% CIs within +/-0.0013 um), and
+   per-detector FFT medians agree to within 0.0003 um. The small
+   mean-based Bland-Altman biases (<= 0.013 um) are shown to be carried
+   by a disclosed 4% tail of algorithmic outliers in the SED profile
+   analysis.
 
-4. Gaussian process regression confirms significant but weak, large-scale
-   spatial components at 400x-750x (likelihood-ratio p <= 0.018; smooth-field
-   amplitude <= 0.94% of the pitch) and a flat field at 1000x.
+4. Gaussian-process regression confirms significant but weak large-scale
+   spatial components at 400x-750x (likelihood-ratio p = 0.018 to
+   1e-54) and a flat field at 1000x; stage-coordinate regression bounds
+   the field linearity to 0.5%.
 
-5. A GUM-compliant uncertainty budget with properly separated Type-A
-   (within-image repeatability) and Type-B components (pixel quantisation,
-   FOV calibration, scan distortion), supplemented by non-parametric
-   bootstrap confidence intervals (10 000 replicates, 95% BCa).
+5. A GUM-compliant uncertainty budget with separated Type-A and Type-B
+   components and expanded uncertainties (k = 3) of 0.09-0.21 um,
+   supplemented by 10 000-replicate bootstrap BCa confidence intervals
+   and normalised-error compatibility metrics (En <= 0.23) against
+   the optical-diffraction measurement (1.65 +/- 0.21 um, k = 3) and
+   the white-light-interferometric cross-check (1.6651 um; 0.1 nm
+   scatter; the certified machine lateral-scale contribution to the
+   pitch is about 1.6 nm at k = 3).
 
-The complete dataset (1500 images, per-image pitch values, tile-level
-spatial metadata) is publicly archived on Zenodo
-(https://doi.org/10.5281/zenodo.20641961), and the full R analysis pipeline
-is available on GitHub
-(https://github.com/dawidkucharski/sem-grating-pitch-benchmark),
-together constituting an open benchmark for SEM distortion assessment
-methods. Both repositories are released under CC-BY 4.0.
+The processed dataset and the complete R and Python pipelines are
+publicly archived on Zenodo (https://doi.org/10.5281/zenodo.20641960)
+and GitHub (https://github.com/dawidkucharski/sem-grating-pitch-benchmark),
+both under CC-BY 4.0, constituting an open dataset and a reproducible
+benchmark resource for SEM pitch and distortion analysis. Supplementary
+material comprises the synthetic-image
+validation figure and the corresponding per-pitch numerical results.
 
-I confirm that this work is original, has not been published previously, and
-is not under consideration elsewhere. There are no conflicts of interest to
-declare.
+I confirm that this work is original, has not been published previously,
+and is not under consideration elsewhere. All authors approved the
+manuscript, and the contributions are detailed in the CRediT statement.
+There are no conflicts of interest to declare.
 
 Thank you for considering this submission.
 
@@ -62,3 +71,4 @@ Dawid Kucharski
 Institute of Mechanical Technology
 Poznan University of Technology, Poland
 ORCID: 0000-0002-9880-9670
+dawid.kucharski@put.poznan.pl

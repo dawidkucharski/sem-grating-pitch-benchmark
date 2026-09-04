@@ -1,0 +1,6 @@
+# Generated figure outputs (scripts regenerate them)
+python/*.pdf
+python/*.png
+wli/*.pdf
+wli/*.png
+*.DS_Store
