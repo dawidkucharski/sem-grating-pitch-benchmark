@@ -234,7 +234,8 @@ PER_PAGE = 7
 detail = []
 for page in range(int(np.ceil(len(out) / PER_PAGE))):
     part = out.iloc[page * PER_PAGE:(page + 1) * PER_PAGE]
-    fig, axes = plt.subplots(PER_PAGE, 2, figsize=(8.6, 2.05 * PER_PAGE), gridspec_kw={"width_ratios": [1, 2.3]})
+    # Row height chosen so that a page of seven rows and its caption fit on one page of the letter.
+    fig, axes = plt.subplots(PER_PAGE, 2, figsize=(8.6, 1.68 * PER_PAGE), gridspec_kw={"width_ratios": [1, 3.0]})
     row_titles = []
     for (a, b), r in zip(axes, part.itertuples()):
         img = np.asarray(Image.open(os.path.join(ROOT, r.image_path)).convert("L"), dtype=float)
