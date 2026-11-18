@@ -1,0 +1,34 @@
+== Non-periodic part of the column-averaged profile ==
+irregular=False: n=1400  variance fraction median 1.44 % (quartiles 1.15-1.91 %)  peak/median local RMS median 1.54 (quartiles 1.37-1.79)
+irregular=True: n=100  variance fraction median 2.37 % (quartiles 1.89-3.60 %)  peak/median local RMS median 2.05 (quartiles 1.51-2.87)
+                      n  frac_median_pct  peak_median
+detector irregular                                   
+BED-S    False      719             1.25         1.64
+         True        31             2.89         2.77
+SED      False      681             1.57         1.44
+         True        69             2.16         1.69
+irregular images in which the largest local residual lies at the anomalous spacing: 68 of 100 (expected by chance: 24.2); by detector: {'BED-S': {'sum': 26, 'size': 31}, 'SED': {'sum': 42, 'size': 69}}
+irregular images above the 95th percentile of the regular images in the variance fraction (3.46 %): 27 of 100
+Fig. 6 outliers (variance fraction in %, ratio to the median of the regular images, peak ratio):
+ mag   det                    base  pitch  frac_pct  ratio  peak
+ 400   SED   Grp_002_SED_X008_Y010   8.67     62.32  43.29  6.80
+ 500   SED   Grp_001_SED_X014_Y013   2.33     46.13  32.04  1.42
+ 400   SED   Grp_002_SED_X008_Y011   1.82     39.95  27.75  3.27
+ 500 BED-S Grp_001_BED-S_X005_Y009   1.53      1.14   0.79  1.65
+ 750 BED-S Grp_001_BED-S_X002_Y007   1.58      1.21   0.84  1.53
+ 500 BED-S Grp_001_BED-S_X009_Y001   1.71      2.03   1.41  2.73
+ 500   SED   Grp_001_SED_X003_Y001   1.60      2.62   1.82  1.59
+ 400   SED   Grp_002_SED_X016_Y017   1.71      4.26   2.96  1.21
+ 500 BED-S Grp_001_BED-S_X007_Y003   1.60      1.16   0.80  1.87
+ 500 BED-S Grp_001_BED-S_X002_Y005   1.61      1.17   0.81  2.22
+ 500   SED   Grp_001_SED_X004_Y000   1.69      1.27   0.88  1.42
+ 500   SED   Grp_001_SED_X008_Y000   1.69      1.21   0.84  1.56
+1000 BED-S Grp_003_BED-S_X001_Y005   1.62      1.09   0.76  1.61
+ 500 BED-S Grp_001_BED-S_X012_Y009   1.69      1.26   0.88  1.56
+ 500 BED-S Grp_001_BED-S_X002_Y012   1.69      0.75   0.52  1.64
+ 400   SED   Grp_002_SED_X015_Y016   1.70      2.90   2.01  1.61
+ 400   SED   Grp_002_SED_X014_Y003   1.70      1.55   1.08  1.38
+ 400 BED-S Grp_002_BED-S_X006_Y007   1.63      4.02   2.79  4.63
+ 500   SED   Grp_001_SED_X000_Y008   1.69      2.25   1.56  1.43
+ 500   SED   Grp_001_SED_X014_Y000   1.69      1.22   0.85  1.40
+ 400   SED   Grp_002_SED_X016_Y018   1.69      3.46   2.40  2.98
