@@ -42,7 +42,7 @@ def report_text_overlaps(fig, name):
     """Print pairs of drawn text labels whose bounding boxes intersect."""
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
-    texts = list(fig.texts)
+    texts = list(fig.texts) + [t for leg in fig.legends for t in leg.get_texts()]
     for ax in fig.findobj(matplotlib.axes.Axes):
         texts += [ax.title, ax.xaxis.label, ax.yaxis.label] + list(ax.texts)
         if ax.get_legend() is not None:
@@ -56,8 +56,10 @@ def report_text_overlaps(fig, name):
     print(f"{name}: {len(boxes)} labels, {len(hits)} overlapping pairs", hits[:6])
 
 # ------------------------------------------------------------ Fig. 6
+# Layout and styling of the submitted figure (sem_linearity_fig.py); only the insets are new.
 df = pd.read_csv(os.path.join(RES, "pitch1d_physical.csv")).dropna(subset=["pitch"])
 fig, axes = plt.subplots(2, 2, figsize=(8.6, 7.6))
+handles = []
 for ax, mag in zip(axes.ravel(), MAGS):
     g = df[df.mag == mag]
     bx = stats.linregress(g.stage_x_um, g.pitch)
@@ -74,17 +76,18 @@ for ax, mag in zip(axes.ravel(), MAGS):
     for a in targets:
         for det, c, m in [("SED", "#1f77b4", "o"), ("BED-S", "#d62728", "s")]:
             gg = g[g.det == det]
-            a.plot(gg.stage_x_um, gg.pitch, m, ms=4 if a is ax else 3, mfc="none", mec=c, mew=0.7,
-                   alpha=0.75, label=det if a is ax else None)
+            hd = a.plot(gg.stage_x_um, gg.pitch, m, ms=4 if a is ax else 3, mfc="none", mec=c, mew=0.7, alpha=0.75)[0]
+            if mag == 400 and a is ax:
+                handles.append((hd, det))
         a.plot(xx, bx.intercept + bx.slope * xx, "k-", lw=1.2)
         a.axhline(dbar, color="0.45", ls="--", lw=0.8)
     ax.set_title(f"${mag}\\times$:  $b_x = {bx.slope:.1e}$ µm/µm ($p = {bx.pvalue:.2f}$)\n"
-                 f"max. rel. change $= {100 * abs(bx.slope) * xr / dbar:.2f}$%", fontsize=9)
-    ax.set_xlabel("Stage position $x$ [µm]")
-    ax.set_ylabel("Local groove spacing [µm]")
-    if mag == 750:
-        ax.legend(loc="lower right", fontsize=8, frameon=False)
-fig.tight_layout()
+                 f"max. rel. change $= {100 * abs(bx.slope) * xr / dbar:.2f}$%", fontsize=9.5)
+    ax.set_xlabel("Stage position $x$ [µm]", fontsize=9)
+    ax.set_ylabel("Local groove spacing [µm]", fontsize=9)
+    ax.tick_params(labelsize=8)
+fig.legend([hd for hd, _ in handles], [det for _, det in handles], loc="upper center", ncol=2, fontsize=9, frameon=False)
+fig.tight_layout(rect=[0, 0, 1, 0.96])
 report_text_overlaps(fig, "linearity_combined_rev1")
 for ax, mag in zip(axes.ravel(), MAGS):
     g = df[df.mag == mag]
@@ -102,35 +105,44 @@ labels = ["Nominal\n(design value,\nno uncertainty\nstated)", "SEM 1D\n(instrume
 pitch = [1.6667, 1.6448, 1.6442, 1.650, 1.66512]
 yerr = [None, 0.09, 0.09, 0.21, 0.0016]
 colours = ["black", "tab:blue", "tab:blue", "tab:green", "tab:orange"]
-fig, ax = plt.subplots(figsize=(8, 4.8))
-for i, (v, e, c) in enumerate(zip(pitch, yerr, colours)):
-    if e is None:
-        ax.plot(i, v, "s", mfc="none", mec=c, ms=9, mew=1.4)
-    else:
-        ax.errorbar(i, v, yerr=e, fmt="o", color=c, ms=8, capsize=6, lw=1.6)
-ax.set_xticks(range(len(labels)))
-ax.set_xticklabels(labels, fontsize=8)
-ax.set_ylabel("Pitch [µm]")
-ax.set_ylim(1.40, 1.90)
-ax.grid(axis="y", ls=":", alpha=0.5)
-fig.tight_layout()
-report_text_overlaps(fig, "method_comparison_rev1")
-fig.savefig(os.path.join(FIG, "method_comparison_rev1.pdf"))
-plt.close(fig)
+markers = ["s", "o", "o", "D", "o"]
+# Title, axis label, markers and font size as in the submitted figure (method_comparison_pitch.py).
+with plt.rc_context({"font.size": 10}):
+    fig, ax = plt.subplots(figsize=(8, 4.9))
+    for i, (v, e, c, mk) in enumerate(zip(pitch, yerr, colours, markers)):
+        if e is None:
+            ax.plot(i, v, mk, mfc="none", mec=c, ms=9, mew=1.4)
+        else:
+            ax.errorbar(i, v, yerr=e, fmt=mk, color=c, ms=9, capsize=6, lw=1.6)
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylabel("pitch [µm]")
+    ax.set_ylim(1.40, 1.90)
+    ax.set_title("Grating pitch: method comparison", fontsize=11)
+    ax.grid(axis="y", ls=":", alpha=0.5)
+    fig.tight_layout()
+    report_text_overlaps(fig, "method_comparison_rev1")
+    fig.savefig(os.path.join(FIG, "method_comparison_rev1.pdf"))
+    plt.close(fig)
 
 # --------------------------------------------------------- schematic
-fig, (a, b) = plt.subplots(1, 2, figsize=(8.6, 3.9), gridspec_kw={"width_ratios": [1.25, 1]})
-nx, ny, w, h = 8, 8, 17.0, 12.0
+fig, (a, b) = plt.subplots(1, 2, figsize=(8.6, 3.9), gridspec_kw={"width_ratios": [1.1, 1]})
+nx, ny, w, h = 8, 8, 17.0, 12.6
 for i in range(nx):
     for j in range(ny):
         a.add_patch(Rectangle((-(i + 1) * w, j * h), w, h, fc="0.93" if (i + j) % 2 else "white", ec="0.4", lw=0.6))
+# Recorded path: tile (0,0) first (largest stage x), x direction alternating from row to row.
+x_first, x_last = -w / 2, -nx * w + w / 2
 for j in range(3):
-    a.annotate("", xy=(-nx * w + 4, j * h + h / 2), xytext=(-4, j * h + h / 2),
-               arrowprops=dict(arrowstyle="->", color="tab:red", lw=1.1))
-    if j < 2:
-        a.plot([-nx * w + 4, -4], [j * h + h / 2, (j + 1) * h + h / 2], color="tab:red", lw=0.6, ls=":")
-a.text(-w / 2, -5, "tile (0,0)", ha="center", va="top", fontsize=7)
-a.text(-nx * w / 2, ny * h + 3, "survey area covered by the montage\n(8$\\times$8 images shown; steps of 17 µm $\\times$ 12 µm)",
+    yc = j * h + h / 2
+    x0, x1 = (x_first, x_last) if j % 2 == 0 else (x_last, x_first)
+    a.annotate("", xy=(x1, yc), xytext=(x0, yc), arrowprops=dict(arrowstyle="->", color="tab:red", lw=1.1))
+    a.plot([x1, x1], [yc, yc + h], color="tab:red", lw=1.1, ls="-" if j < 2 else ":")
+a.text(-nx * w / 2, 3 * h + h / 2, "acquisition path (first three rows)", color="tab:red", fontsize=7, ha="center",
+       va="center", bbox=dict(fc="white", ec="none", pad=0.8))
+a.text(0, -4, "tile (0,0): first image", ha="right", va="top", fontsize=7)
+a.text(-nx * w / 2, ny * h + 3,
+       "survey area covered by the montage\n(8$\\times$8 images shown; steps of about 17 µm $\\times$ 12.6 µm)",
        ha="center", fontsize=8)
 a.annotate("", xy=(-nx * w - 8, ny * h), xytext=(-nx * w - 8, 0), arrowprops=dict(arrowstyle="->", lw=1))
 a.text(-nx * w - 11, ny * h / 2, "stage $y$ (acquisition order of rows)", rotation=90, va="center", ha="right", fontsize=8)
@@ -141,6 +153,7 @@ a.text(-3.5 * w, 5 * h + 1.5, "one image", color="tab:blue", fontsize=7, ha="cen
 a.set_xlim(-nx * w - 30, 8)
 a.set_ylim(-26, ny * h + 20)
 a.set_aspect("equal")
+a.set_anchor("N")
 a.axis("off")
 a.set_title("(a)", loc="left", fontsize=10)
 
@@ -176,6 +189,7 @@ b.text(W, -3.4, "groove rotation exaggerated", fontsize=7, color="0.3", ha="righ
 b.set_xlim(-4, W + 2.6)
 b.set_ylim(-4.4, H + 2.2)
 b.set_aspect("equal")
+b.set_anchor("N")
 b.axis("off")
 b.set_title("(b)", loc="left", fontsize=10)
 fig.tight_layout()
@@ -190,9 +204,9 @@ for r in p.itertuples():
     s = np.diff([float(v) for v in str(r.minima_pixels_1based).split(";")])
     ratios[r.detector].extend(s / np.median(s))
 fig, ax = plt.subplots(figsize=(7, 3.4))
-edges = np.arange(0, 2.5001, 0.05)
+edges = np.arange(0, 3.0501, 0.05)  # the largest ratio is 2.98
 ax.hist([ratios["SED"], ratios["BED-S"]], bins=edges, label=["SED", "BED-S"], color=["#1f77b4", "#d62728"], log=True)
-for v, lab in [(0.6, "0.6 (rule of the paper)"), (0.85, "0.85"), (1.15, "1.15")]:
+for v, lab in [(0.6, "0.6 (acceptance criterion)"), (0.85, "0.85"), (1.15, "1.15")]:
     ax.axvline(v, color="k", ls="--" if v == 0.6 else ":", lw=0.9)
     ax.text(v, 2.2e4, lab, rotation=90, va="top", ha="right", fontsize=7)
 ax.set_xlabel("Inter-minimum spacing / median spacing of the same image")
@@ -221,12 +235,13 @@ detail = []
 for page in range(int(np.ceil(len(out) / PER_PAGE))):
     part = out.iloc[page * PER_PAGE:(page + 1) * PER_PAGE]
     fig, axes = plt.subplots(PER_PAGE, 2, figsize=(8.6, 2.05 * PER_PAGE), gridspec_kw={"width_ratios": [1, 2.3]})
+    row_titles = []
     for (a, b), r in zip(axes, part.itertuples()):
         img = np.asarray(Image.open(os.path.join(ROOT, r.image_path)).convert("L"), dtype=float)
         prof = img.mean(axis=0)
         sp, minima, dist, keep = fig6_algorithm(prof)
         main = np.array([float(v) for v in str(p.loc[r.image_path, "minima_pixels_1based"]).split(";")]) - 1
-        a.imshow(img, cmap="gray", aspect="auto")
+        a.imshow(img, cmap="gray", vmin=0, vmax=255)
         a.set_xticks([]); a.set_yticks([])
         a.set_ylabel(f"{r.mag}$\\times$ {r.det}\n{r.base.split('_', 3)[-1]}", fontsize=7)
         b.plot(prof, color="0.6", lw=0.6)
@@ -236,8 +251,14 @@ for page in range(int(np.ceil(len(out) / PER_PAGE))):
         b.plot(main, np.full(len(main), lo), "|", color="tab:red", ms=9, mew=1.2)
         b.set_xlim(0, len(prof))
         b.tick_params(labelsize=7)
-        b.set_title(f"Fig. 6 value {r.pitch:.3f} µm ({int(keep.sum())} of {len(dist)} spacings kept) | main analysis "
-                    f"{r.pitch_1d_um:.3f} µm ({r.kind}) | FFT {r.pitch_fft_um:.3f} µm", fontsize=7.5)
+        mratio = np.diff(main) / np.median(np.diff(main))
+        irregular = [f"{n} {k} spacing{'s' if n > 1 else ''}"
+                     for n, k in ((int((mratio < 0.85).sum()), "short"), (int((mratio > 1.15).sum()), "long")) if n]
+        status = "regular" if not irregular else (
+            ", ".join(irregular) + ("; accepted" if p.loc[r.image_path, "accepted"] else "; rejected"))
+        row_titles.append((a, b, f"Fig. 6 value {r.pitch:.3f} µm ({int(keep.sum())} of {len(dist)} spacings kept)   |   "
+                                 f"main analysis {r.pitch_1d_um:.3f} µm ({status})   |   FFT {r.pitch_fft_um:.3f} µm"))
+        b.set_title(" ", fontsize=7.5)  # reserves the height of the row title
         ratio = dist / np.median(dist)
         detail.append(dict(image_path=r.image_path, fig6_minima=len(minima), fig6_spacings=len(dist),
                            fig6_kept=int(keep.sum()), n_short=int((ratio < 0.7).sum()), n_long=int((ratio > 1.3).sum()),
@@ -248,11 +269,35 @@ for page in range(int(np.ceil(len(out) / PER_PAGE))):
         a.axis("off"); b.axis("off")
     axes[len(part) - 1, 1].set_xlabel("Image $x$ [px]", fontsize=8)
     fig.tight_layout()
-    fig.savefig(os.path.join(RESP, f"figR_outliers_{page + 1}.pdf"), dpi=110)
+    fig.canvas.draw()  # fixes the positions of the equal-aspect image panels
+    for a, b, text in row_titles:
+        fig.text(a.get_position().x0, b.get_position().y1 + 0.004, text, fontsize=7.5, ha="left", va="bottom")
+    fig.savefig(os.path.join(RESP, f"figR_outliers_{page + 1}.pdf"), dpi=200)
     plt.close(fig)
 detail = pd.DataFrame(detail)
 detail.to_csv(os.path.join(AN, "referee_fig6_outliers_detail.csv"), index=False)
 print(detail.drop(columns="image_path").to_string())
+
+# ------------- response: the three most deviating images, both detectors
+TOP3 = [(400, "Grp_002", "X008_Y010"), (400, "Grp_002", "X008_Y011"), (500, "Grp_001", "X014_Y013")]
+fig, axes = plt.subplots(2, 3, figsize=(8.6, 4.75))
+bar = 2.0 / S
+for col, (mag, grp, tile_id) in enumerate(TOP3):
+    for row, det in enumerate(["SED", "BED-S"]):
+        ax = axes[row, col]
+        img = np.asarray(Image.open(os.path.join(ROOT, f"mag{mag}_SED-BED", det, f"{grp}_{det}_{tile_id}.png")).convert("L"))
+        ax.imshow(img, cmap="gray", vmin=0, vmax=255)
+        ax.set_xticks([]); ax.set_yticks([])
+        ax.add_patch(Rectangle((35, img.shape[0] - 150), bar + 50, 115, fc="black", ec="none", alpha=0.65))
+        ax.plot([60, 60 + bar], [img.shape[0] - 62, img.shape[0] - 62], color="white", lw=2.5, solid_capstyle="butt")
+        ax.text(60 + bar / 2, img.shape[0] - 78, "2 µm", color="white", fontsize=7, ha="center", va="bottom")
+        if row == 0:
+            ax.set_title(f"{mag}$\\times$ series, tile {tile_id.replace('_', '/')}", fontsize=8.5)
+        if col == 0:
+            ax.set_ylabel(det, fontsize=9)
+fig.tight_layout()
+fig.savefig(os.path.join(RESP, "figR_outliers_top3.pdf"), dpi=220)
+plt.close(fig)
 
 # ------------------- contact sheets of the images with irregular spacings
 irr = []
@@ -287,6 +332,15 @@ pm = pm.merge(fft[["group_label", "detector", "file", "fft"]], on=["group_label"
 pm["time"] = pd.to_datetime(pm.timestamp)
 pm["t"] = pm.groupby("group_label").time.transform(lambda v: (v - v.min()).dt.total_seconds() / 60)
 tile = pm.groupby(["group_label", "tile_x", "tile_y"]).agg(x=("stage_x_um", "mean"), t=("t", "mean"), fft=("fft", "mean")).reset_index()
+
+
+def ptext(pv):
+    if pv >= 0.01:
+        return f"{pv:.2f}"
+    mant, expo = f"{pv:.0e}".split("e")
+    return f"{mant}\\times10^{{{int(expo)}}}"
+
+
 fig, axes = plt.subplots(2, 4, figsize=(11, 4.8), sharey=True)
 for k, mag in enumerate(MAGS):
     g = tile[tile.group_label == mag]
@@ -297,7 +351,7 @@ for k, mag in enumerate(MAGS):
         xx = np.array([g[col].min(), g[col].max()])
         ax.plot(xx, r.intercept + r.slope * xx, "k-", lw=1)
         ax.set_xlabel(lab, fontsize=8)
-        ax.set_title(f"{mag}$\\times$ series, $p$ = {r.pvalue:.1g}", fontsize=8)
+        ax.set_title(f"{mag}$\\times$ series, $p = {ptext(r.pvalue)}$", fontsize=8)
         ax.tick_params(labelsize=7)
     axes[0, 0].set_ylabel("FFT pitch per tile [µm]", fontsize=8)
     axes[1, 0].set_ylabel("FFT pitch per tile [µm]", fontsize=8)
